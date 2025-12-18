@@ -1,0 +1,28 @@
+apiVersion: cnap.platforms.howlabs.io/v1alpha1
+kind: Application
+metadata:
+  name: example-application
+spec:
+  envPrefix:
+    - env: Development
+      prefix: dev
+    - env: Integration
+      prefix: integ
+    - env: Staging
+      prefix: staging
+  exposedAPIs:
+    - name: LoginService
+      urlPath: /login
+      httpsEnabled: false
+      authentication:
+        enabled: true
+        apiToken:
+          enabled: true
+          token: login-service-token
+      singleSignOn:
+        enabled: true
+        saml:
+          clientID: saml-client-id
+          clientSecret: saml-client-secret
+          idpMetadata: <!-- SAML metadata content -->
+          assertionConsumerServiceURL: https://exampleapp.io/saml/acs

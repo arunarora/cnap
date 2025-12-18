@@ -91,11 +91,9 @@ spec:
                               type: string
                             clientSecret:
                               type: string
-                            idpMetadataURL:
+                            idpMetadata:
                               type: string
                             assertionConsumerServiceURL:
-                              type: string
-                            audience:
                               type: string
               internalAPIs:
                 type: array
