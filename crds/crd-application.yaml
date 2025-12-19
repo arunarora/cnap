@@ -63,38 +63,25 @@ spec:
                       properties:
                         enabled:
                           type: boolean
+                        # The user/password should be stored in a Kubernetes Secret and the
+                        # reference to the secret is received in the Status created by the operator
                         basicAuth:
-                          type: object
-                          properties:
-                            enabled:
-                              type: boolean
-                            username:
-                              type: string
-                            password:
-                              type: string
+                          type: boolean
+                        # The API token should be stored in a Kubernetes Secret and the
+                        # reference to the secret is received in the Status created by the operator
                         apiToken:
-                          type: object
-                          properties:
-                            enabled:
-                              type: boolean
-                            token:
-                              type: string
+                          type: boolean
                     singleSignOn:
                       type: object
                       properties:
                         enabled:
                           type: boolean
                         saml:
-                          type: object
-                          properties:
-                            clientID:
-                              type: string
-                            clientSecret:
-                              type: string
-                            idpMetadata:
-                              type: string
-                            assertionConsumerServiceURL:
-                              type: string
+                          type: boolean
+                        oauth2:
+                          type: boolean
+                        oidc:
+                          type: boolean
               internalAPIs:
                 type: array
                 items:

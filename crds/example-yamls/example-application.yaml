@@ -16,13 +16,10 @@ spec:
       httpsEnabled: false
       authentication:
         enabled: true
-        apiToken:
-          enabled: true
-          token: login-service-token
+        basicAuth: true
+        apiToken: true
       singleSignOn:
         enabled: true
-        saml:
-          clientID: saml-client-id
-          clientSecret: saml-client-secret
-          idpMetadata: <!-- SAML metadata content -->
-          assertionConsumerServiceURL: https://exampleapp.io/saml/acs
+        saml: true
+        oauth2: true
+        oidc: true
