@@ -10,6 +10,6 @@ maintainers:
 dependencies:
   - name: kong
     version: 0.21.0
-    repository: file://../dependent-charts/api-gateway/kong
+    repository: file://../dependent-charts/api-gateway/kong-ingress-controller
     conditions:
       - apiGateway.enabled
