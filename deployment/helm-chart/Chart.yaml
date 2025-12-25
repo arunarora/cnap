@@ -1,0 +1,15 @@
+apiVersion: v2
+name: cnap
+version: 0.0.1
+appVersion: "0.0.1"
+description: A Helm chart for CNAP platform components
+type: application
+maintainers:
+  - name: Arun Arora
+    email: arun.arora.dev@gmail.com
+dependencies:
+  - name: kong
+    version: 0.21.0
+    repository: file://../dependent-charts/api-gateway/kong
+    conditions:
+      - apiGateway.enabled
