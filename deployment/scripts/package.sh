@@ -12,8 +12,7 @@ DEP_CHART_SRC="${DEPLOY_DIR}/dependent-chart"
 # Manually specify relative directories (relative to ${DEPLOY_DIR}) that contain
 # CRD YAML files named like 'crd-*.yaml'. Edit this array as needed.
 CRD_DIRS=(
-	"../application-crds"
-	"../application1-crds"
+	"../crds"
 	# add other relative paths here, e.g.:
 	# "dependent-charts/kong-ingress-controller/crds"
 )
