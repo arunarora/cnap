@@ -26,7 +26,6 @@ fi
 # Create target directories
 mkdir -p "${TARGET_DIR}"
 mkdir -p "${CNAP_DIR}"
-mkdir -p "${CNAP_DIR}/charts"
 
 # Copy helm-chart into cnap dir
 if [ -d "${HELM_CHART_SRC}" ]; then
@@ -45,6 +44,3 @@ echo "Packaged chart created in ${TARGET_DIR}"
 echo "Done. To make the script executable (if needed): chmod +x ${SCRIPT_DIR}/package.sh"
 
 exit 0
-
-#!/bin/bash
-
