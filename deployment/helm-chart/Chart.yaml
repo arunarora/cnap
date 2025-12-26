@@ -10,4 +10,4 @@ maintainers:
 dependencies:
   - name: kong-ingress-controller
     version: 0.21.0
-    repository: file://../../dependent-charts/api-gateway/kong-ingress-controller
+    repository: file://../../dependent-charts/kong-ingress-controller
