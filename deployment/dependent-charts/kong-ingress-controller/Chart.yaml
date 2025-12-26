@@ -17,7 +17,7 @@ icon: https://s3.amazonaws.com/downloads.kong/universe/assets/icon-kong-inc-larg
 maintainers:
 - email: team-k8s@konghq.com
   name: team-k8s-bot
-name: ingress
+name: kong-ingress-controller
 sources:
 - https://github.com/Kong/charts/tree/main/charts/ingress
 version: 0.21.0
