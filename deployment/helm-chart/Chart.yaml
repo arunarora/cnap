@@ -8,8 +8,6 @@ maintainers:
   - name: Arun Arora
     email: arun.arora.dev@gmail.com
 dependencies:
-  - name: kong
+  - name: kong-ingress-controller
     version: 0.21.0
-    repository: file://../dependent-charts/api-gateway/kong-ingress-controller
-    conditions:
-      - apiGateway.enabled
+    repository: file://../../dependent-charts/api-gateway/kong-ingress-controller
