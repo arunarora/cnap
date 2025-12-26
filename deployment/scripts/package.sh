@@ -19,7 +19,7 @@ fi
 
 # Delete target directory, if exists
 if [ -d "${TARGET_DIR}" ]; then
-        echo "Deleting ${TARGET_DIR}"
+        echo "Deleting Target dir: ${TARGET_DIR}"
         rm -rf "${TARGET_DIR}"
 fi
 
