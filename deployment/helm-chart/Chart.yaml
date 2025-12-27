@@ -11,3 +11,6 @@ dependencies:
   - name: kong-ingress-controller
     version: 0.21.0
     repository: file://../../dependent-charts/kong-ingress-controller
+  - name: operator-applications
+    version: 0.0.1
+    repository: file://../../dependent-charts/operator-applications
