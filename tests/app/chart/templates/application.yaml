@@ -1,0 +1,27 @@
+apiVersion: cnap.platforms.howlabs.io/v1alpha1
+kind: Application
+metadata:
+  name: simple-api
+spec:
+  envPrefix:
+#    - env: Development
+#      prefix: dev
+#    - env: Integration
+#      prefix: integ
+#    - env: Staging
+#      prefix: staging
+    - env: Production
+      prefix: ""
+  exposedAPIs:
+    - name: StatusService
+      urlPath: /api/status
+      httpsEnabled: false
+      authentication:
+        enabled: true
+        basicAuth: true
+        apiToken: true
+      singleSignOn:
+        enabled: true
+        saml: true
+        oauth2: true
+        oidc: true
