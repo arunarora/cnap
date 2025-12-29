@@ -489,3 +489,9 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+## URLs
+*Auth Token URL:*
+If you are using a newer version of Keycloak (v17+ / Quarkus), the default path no longer includes /auth.
+New Format (v17+): http://<host>:<port>/realms/<realm-name>/protocol/openid-connect/token
+Old Format (WildFly): http://<host>:<port>/auth/realms/<realm-name>/protocol/openid-connect/token
