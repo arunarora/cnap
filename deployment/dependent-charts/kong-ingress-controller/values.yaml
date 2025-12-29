@@ -3,6 +3,12 @@ deployment:
     enabled: false
 
 controller:
+  # Arun Arora: Added postgresql enabled: false here to use KIC in dbless mode
+  # without this, postgresql pod was getting created when deploying KIC as part
+  # of CNAP.
+  postgresql:
+    enabled: false
+
   proxy:
     nameOverride: "{{ .Release.Name }}-gateway-proxy"
 
@@ -29,9 +35,17 @@ controller:
 
 gateway:
   enabled: true
+
+  # Arun Arora: Added postgresql enabled: false here to use KIC in dbless mode
+  # without this, postgresql pod was getting created when deploying KIC as part
+  # of CNAP.
+  postgresql:
+    enabled: false
+
   deployment:
     kong:
       enabled: true
+
 
   admin:
     enabled: true
