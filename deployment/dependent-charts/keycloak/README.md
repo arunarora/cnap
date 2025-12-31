@@ -495,3 +495,11 @@ limitations under the License.
 If you are using a newer version of Keycloak (v17+ / Quarkus), the default path no longer includes /auth.
 New Format (v17+): http://<host>:<port>/realms/<realm-name>/protocol/openid-connect/token
 Old Format (WildFly): http://<host>:<port>/auth/realms/<realm-name>/protocol/openid-connect/token
+
+*OpenID Connect discovery endpoint URL:*
+If you are using a newer version of Keycloak (v17+ / Quarkus), the default path no longer includes /auth.
+New Format (v17+): http://<host>:<port>/realms/<realm-name>/.well-known/openid-configuration
+Old Format (WildFly): http://<host>:<port>/auth/realms/<realm-name>/.well-known/openid-configuration
+NOTE: If active is always coming as false in the response of the introspect URL,  while data is correct in the POST request,
+      try with HTTPS endpoint instead of HTTP endpoint.
+
