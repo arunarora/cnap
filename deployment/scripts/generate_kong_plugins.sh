@@ -58,11 +58,7 @@ run_cmd() {
   fi
 }
 
-# Check for yq (skip check if dry-run, but safer to check anyway)
-if ! command -v yq &> /dev/null; then
-  echo "Error: 'yq' is required but not installed." >&2
-  exit 1
-fi
+# No external YAML tool required; we append file contents into the template
 
 KONG_DIR=$(readlink -f "$1")
 DEST_DIR=$(readlink -f "$2")
@@ -126,10 +122,19 @@ for plugin_path in "$KONG_DIR"/*; do
     # 2. Generate ConfigMap YAML
     sed "s/<VarPluginName>/$plugin_name/g" "$CONFIGMAP_TEMPLATE" > "$out_cm"
 
-    # 3. Inject Data
+    # 3. Inject Data manually (avoid parsing Helm templates with yq)
+    # Ensure a clean separation and top-level `data:` key
+    printf '\n' >> "$out_cm"
+    printf 'data:\n' >> "$out_cm"
+
     for file_name in "handler.lua" "schema.lua"; do
       full_file_path="$plugin_path/$file_name"
-      yq -i ".data[\"$file_name\"] = load_str(\"$full_file_path\")" "$out_cm"
+      if [ -f "$full_file_path" ]; then
+        printf '  %s: |-\n' "$file_name" >> "$out_cm"
+        sed 's/^/    /' "$full_file_path" >> "$out_cm"
+        # Ensure file content ends with a newline so subsequent keys don't join
+        printf '\n' >> "$out_cm"
+      fi
     done
   fi
 done
