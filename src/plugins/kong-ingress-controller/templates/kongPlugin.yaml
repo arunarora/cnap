@@ -2,7 +2,7 @@ apiVersion: configuration.konghq.com/v1
 kind: KongPlugin
 metadata:
   name: kongplugin-<VarPluginName>
-  namespace:  {{ template "kong.namespace" . }}
+  namespace:  {{ .Release.Namespace | quote }}
   annotations:
     kubernetes.io/ingress.class: kong
 plugin: <VarPluginName> # The name of the plugin
