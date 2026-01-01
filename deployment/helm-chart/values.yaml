@@ -2,7 +2,7 @@ kong-ingress-controller:
   enabled: true
   gateway:
     plugins:
-      ConfigMaps:
+      configMaps:
       - name: kong-plugin-oidc  # Reference to the ConfigMap created for the OIDC plugin
         pluginName: oidc  # The name of the plugin which kong will use
         
