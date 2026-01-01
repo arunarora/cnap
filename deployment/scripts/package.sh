@@ -47,6 +47,27 @@ else
 	exit 3
 fi
 
+# Generate per-plugin Kong files and move them into the dependent chart templates
+# Uses: deployment/scripts/generate_kong_plugins.sh
+GEN_SCRIPT="${SCRIPT_DIR}/generate_kong_plugins.sh"
+CNAP_ROOT=$(readlink -f "${SCRIPT_DIR}/../..")
+PLUGIN_SRC="${CNAP_ROOT}/src/plugins/kong-ingress-controller"
+DEST_TEMPLATES="${CNAP_DIR}/templates"
+
+if [ -f "${GEN_SCRIPT}" ]; then
+	if [ ! -x "${GEN_SCRIPT}" ]; then
+		chmod +x "${GEN_SCRIPT}" || true
+	fi
+	if [ -d "${PLUGIN_SRC}" ]; then
+		echo "Generating Kong plugin files from ${PLUGIN_SRC} -> ${DEST_TEMPLATES}"
+		"${GEN_SCRIPT}" "${PLUGIN_SRC}" "${DEST_TEMPLATES}"
+	else
+		echo "Plugin source not found: ${PLUGIN_SRC}; skipping plugin generation"
+	fi
+else
+	echo "Generator script not found: ${GEN_SCRIPT}; skipping plugin generation"
+fi
+
 # Ensure the crds target exists inside the copied chart
 mkdir -p "${CNAP_DIR}/crds"
 
@@ -74,6 +95,37 @@ fi
 helm package "${CNAP_DIR}" --destination "${TARGET_DIR}" --dependency-update
 
 echo "Packaged chart created in ${TARGET_DIR}"
+
+# Cleanup: remove generated per-plugin YAML files from the dependent chart templates
+# Only remove files that are NOT tracked by git (skip committed files). If the repo
+# root is not a git worktree, skip cleanup to avoid accidental deletions.
+# if [ -n "${DEST_TEMPLATES:-}" ] && [ -d "${DEST_TEMPLATES}" ]; then
+# 	if git -C "${CNAP_ROOT}" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+# 		echo "Cleaning generated plugin files in ${DEST_TEMPLATES} (untracked only)"
+# 		shopt -s nullglob
+# 		removed=0
+# 		skipped=0
+# 		for f in "${DEST_TEMPLATES}"/kongPlugin-*.yaml "${DEST_TEMPLATES}"/configmap-plugin-*.yaml; do
+# 			[ -f "${f}" ] || continue
+# 			# Determine path relative to repo root for git checks
+# 			relpath=$(realpath --relative-to "${CNAP_ROOT}" "${f}" 2>/dev/null || printf "%s" "${f}")
+# 			# If file is tracked by git, skip deletion
+# 			if git -C "${CNAP_ROOT}" ls-files --error-unmatch -- "${relpath}" >/dev/null 2>&1; then
+# 				echo "  SKIP tracked file: $(basename "${f}")"
+# 				skipped=$((skipped+1))
+# 				continue
+# 			fi
+# 			# Not tracked -> safe to remove
+# 			rm -f "${f}"
+# 			echo "  removed: $(basename "${f}")"
+# 			removed=$((removed+1))
+# 		done
+# 		shopt -u nullglob
+# 		echo "Removed ${removed} files, skipped ${skipped} tracked files in ${DEST_TEMPLATES}"
+# 	else
+# 		echo "Git repository not found at ${CNAP_ROOT}; skipping removal of generated plugin files to avoid accidental deletes"
+# 	fi
+# fi
 
 echo "Done. To make the script executable (if needed): chmod +x ${SCRIPT_DIR}/package.sh"
 

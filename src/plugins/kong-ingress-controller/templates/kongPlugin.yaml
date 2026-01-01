@@ -1,10 +1,14 @@
 apiVersion: configuration.konghq.com/v1
 kind: KongPlugin
 metadata:
-  name: kongplugin-{{ .Values.kong-ingress-controller.plugins.<VarPluginName>.name }}
+  name: kongplugin-<VarPluginName>
   namespace:  {{ template "kong.namespace" . }}
   annotations:
-    {{ .Values.kong-ingress-controller.plugins.<VarPluginName>.config | toYaml | indent 4 }}
+    kubernetes.io/ingress.class: kong
 plugin: <VarPluginName> # The name of the plugin
 config:
-  {{ .Values.kong-ingress-controller.plugins.<VarPluginName>.config | toYaml | indent 2 }}
+  {{- /* 1. Safely grab the config block using 'index' to handle the hyphens */ -}}
+  {{- $pluginConfig := index .Values.cnap "kong-ingress-controller" "plugins" "<VarPluginName>" "config" }}
+  
+  {{- /* 2. Dump the entire block as valid YAML with correct indentation */ -}}
+  {{- toYaml $pluginConfig | nindent 2 }}

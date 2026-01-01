@@ -1,14 +1,11 @@
 kong-ingress-controller:
   enabled: true
-  plugins:
-  - oidc:
-      annotations:
-        kubernetes.io/ingress.class: kong
-      config:
-        client_id: "api-auth-client"
-        client_secret: "6QsqpfVECQaNoBYE4Qto7CPW8JuqZwL1"
-        token_validation_url: "https://127.0.0.1:30443/auth/realms/api-auth/protocol/opaenid-connect/token/introspect"
-
+  gateway:
+    plugins:
+      ConfigMaps:
+      - name: kong-plugin-oidc  # Reference to the ConfigMap created for the OIDC plugin
+        pluginName: oidc  # The name of the plugin which kong will use
+        
 keycloak:
   enabled: true
   image:
@@ -46,3 +43,13 @@ keycloak:
 
 operator-applications:
   enabled: true
+
+
+cnap:
+  kong-ingress-controller:
+    plugins:
+      oidc:
+        config:
+          client_id: "api-auth-client"
+          client_secret: "6QsqpfVECQaNoBYE4Qto7CPW8JuqZwL1"
+          token_validation_url: "https://127.0.0.1:30443/auth/realms/api-auth/protocol/opaenid-connect/token/introspect"
