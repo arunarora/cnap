@@ -1,0 +1,10 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: kongplugin-{{ .Values.kong-ingress-controller.plugins.<VarPluginName>.name }}
+  namespace:  {{ template "kong.namespace" . }}
+  annotations:
+    {{ .Values.kong-ingress-controller.plugins.<VarPluginName>.config | toYaml | indent 4 }}
+plugin: <VarPluginName> # The name of the plugin
+config:
+  {{ .Values.kong-ingress-controller.plugins.<VarPluginName>.config | toYaml | indent 2 }}
