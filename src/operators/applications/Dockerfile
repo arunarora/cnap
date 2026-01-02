@@ -15,7 +15,7 @@ USER appuser
 ENV PATH="${PATH}:/home/appuser/.local/bin"
 
 # 4. Install kopf using pip
-RUN pip install --user kopf
+RUN pip install --user kopf kubernetes
 
 # 5. Copy the application code into the container
 ADD /src/* /app/

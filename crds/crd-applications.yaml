@@ -28,7 +28,22 @@ spec:
           spec:
             type: object
             properties:
-              # 1. Global Config (Domain, TLS, etc.)
+              # 1. Gateway Configuration
+              # Defines the specific Kong Plugin strings to use
+              gateway:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: "Name of the gateway to use (if multiple gateways are present)"
+                  plugins:
+                    type: object
+                    description: "Mapping of abstract purposes to concrete plugin names"
+                    properties:
+                      apiToken:
+                        type: string
+                        description: "The plugin string to use for API Token auth (e.g., key-auth)"
+              # 2. Global Config (Domain, TLS, etc.)
               global:
                 type: object
                 properties:
@@ -77,7 +92,7 @@ spec:
                             type: boolean
                           oidc:
                             type: boolean
-              # 2. List of Microservices
+              # 3. List of Microservices
               components:
                 type: array
                 items:

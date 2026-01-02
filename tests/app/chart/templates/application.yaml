@@ -3,25 +3,41 @@ kind: Application
 metadata:
   name: simple-api
 spec:
-  envPrefix:
-#    - env: Development
-#      prefix: dev
-#    - env: Integration
-#      prefix: integ
-#    - env: Staging
-#      prefix: staging
-    - env: Production
-      prefix: ""
-  exposedAPIs:
-    - name: StatusService
-      urlPath: /api/status
-      httpsEnabled: false
-      authentication:
-        enabled: true
-        basicAuth: true
-        apiToken: true
-      singleSignOn:
-        enabled: true
-        saml: true
-        oauth2: true
-        oidc: true
+  gateway:
+    name: kong-ingress-controller  # Name of the gateway to use
+    plugins:
+      apiToken: "kongplugin-oidc"  # Operator will look for this string to Add/Remove
+  global:
+    baseDomain: api.example.com
+    envPrefix:
+      - env: dev
+        prefix: dev
+      - env: prod
+        prefix: ""
+    authentication:
+      enabled: true
+      methods:
+        basicAuth: false
+        apiToken: false
+    singleSignOn:
+      enabled: false
+      methods:
+        saml: false
+        oauth2: false
+        oidc: false
+
+  components:
+    - name: api-service
+      routes:
+        - summary: "Status API"
+          path: /api/status
+          method: GET
+          exposedAPI: true
+          httpsEnabled: true
+          whitelistIPs:
+            - 10.0.0.0/24
+        - summary: "Homepage API"
+          path: /
+          method: GET
+          exposedAPI: true
+          httpsEnabled: false

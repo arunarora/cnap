@@ -2,8 +2,12 @@ apiVersion: cnap.platforms.howlabs.io/v1alpha1
 kind: Application
 metadata:
   name: example-app
-  namespace: default
+  namespace: cnap
 spec:
+  gateway:
+    name: kong-ingress-controller  # Name of the gateway to use
+    plugins:
+      apiToken: "kongplugin-oidc"  # Operator will look for this string to Add/Remove
   global:
     baseDomain: api.example.com
     envPrefix:

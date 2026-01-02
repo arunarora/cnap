@@ -3,6 +3,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}
+  labels:
+    # --- REQUIRED FOR OPERATOR ---
+    # 1. Identifies which Application CR controls this Ingress
+    cnap.io/app: {{ .Values.cnap.appName | quote }}
+    # 2. Identifies the component (for logging/debugging)
+    cnap.io/component: {{ .Values.cnap.compName | quote }}
+    # 3. Defines the Policy (enabled = Secure, disabled = Public)
+    cnap.io/protection: {{ .Values.cnap.protection | quote }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:

@@ -17,3 +17,9 @@ ingress:
   host: "api.example.com"
   path: "/"
   pathType: Prefix
+
+cnap:
+  appName: "simple-api" 
+  compName: "api-service"
+  protection: "enabled"
+
