@@ -1,6 +1,17 @@
 kong-ingress-controller:
   enabled: true
   gateway:
+    deployment:
+      userDefinedVolumes:
+      - name: keycloak-ca-volume
+        secret:
+          secretName: cnap-keycloak-crt
+      userDefinedVolumeMounts:
+      - name: keycloak-ca-volume
+        mountPath: /etc/secrets/keycloak
+        readOnly: true
+    env:
+      lua_ssl_trusted_certificate: "/etc/secrets/keycloak/ca.crt"    
     plugins:
       configMaps:
       - name: kong-plugin-oidc  # Reference to the ConfigMap created for the OIDC plugin
@@ -11,6 +22,18 @@ keycloak:
   image:
     repository: bitnamilegacy/keycloak
     tag: 20.0.5-debian-11-r2
+    debug: true
+  extraEnvVars:
+  - name: KC_LOG_LEVEL
+    value: INFO,org.keycloak.protocol.oidc:debug,org.keycloak.events:debug
+  - name: KC_HOSTNAME_URL
+    value: https://127.0.0.1:30443/auth
+  - name: KC_PROXY
+    value: edge
+  - name: KC_HOSTNAME_STRICT
+    value: "false"
+  - name: KC_HOSTNAME_STRICT_BACKCHANNEL
+    value: "true"
   auth:
     adminUser: "admin"
     adminPassword: "adpass"
@@ -52,4 +75,4 @@ cnap:
         config:
           client_id: "api-auth-client"
           client_secret: "6QsqpfVECQaNoBYE4Qto7CPW8JuqZwL1"
-          token_validation_url: "https://127.0.0.1:30443/auth/realms/api-auth/protocol/opaenid-connect/token/introspect"
+          token_validation_url: "https://cnap-keycloak.cnap.svc.cluster.local:8443/auth/realms/api-auth/protocol/openid-connect/token/introspect"
