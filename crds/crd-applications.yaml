@@ -28,78 +28,86 @@ spec:
           spec:
             type: object
             properties:
-              # Used as prefix for all exposed API URLs. For e.g.
-              # For exposed API: exampleapp.io/createuser, the URL will be:
-              # For Dev Env:          If envPrefix is "dev"         : dev.exampleapp.io/createuser
-              # For Integration Env:  If envPrefix is "integ"       : integ.exampleapp.io/createuser
-              # For Staging Env:      If envPrefix is "staging      : staging.exampleapp.io/createuser
-              # For Production Env:   No Prefix for Production Env  : exampleapp.io/createuser
-              envPrefix:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    env:
-                      type: string
-                    prefix:
-                      type: string
-              exposedAPIs:
+              # 1. Global Config (Domain, TLS, etc.)
+              global:
+                type: object
+                properties:
+                  baseDomain:
+                    type: string
+                    description: "Base domain for the application (e.g., example.com)"
+                  # Used as prefix for all exposed API URLs. For e.g.
+                  # For exposed API: example.com/createuser, the URL will be:
+                  # For Dev Env:          If envPrefix is "dev"         : dev.example.com/createuser
+                  # For Integration Env:  If envPrefix is "integ"       : integ.example.com/createuser
+                  # For Staging Env:      If envPrefix is "staging      : staging.example.com/createuser
+                  # For Production Env:   No Prefix for Production Env  : example.com/createuser
+                  envPrefix:
+                    type: array
+                    description: "Added as prefix to Base domain to denote env (e.g., dev.example.com for dev environment)"
+                    items:
+                      type: object
+                      properties:
+                        env:
+                          type: string
+                        prefix:
+                          type: string
+                  authentication:
+                    type: object
+                    properties:
+                      enabled:
+                        type: boolean
+                      methods:
+                        type: object
+                        properties:
+                          basicAuth:
+                            type: boolean
+                          apiToken:
+                              type: boolean
+                  singleSignOn:
+                    type: object
+                    properties:
+                      enabled:
+                        type: boolean
+                      methods:
+                        type: object
+                        properties:                        
+                          saml:
+                            type: boolean
+                          oauth2:
+                            type: boolean
+                          oidc:
+                            type: boolean
+              # 2. List of Microservices
+              components:
                 type: array
                 items:
                   type: object
                   properties:
                     name:
                       type: string
-                    urlPath:
-                      type: string
-                    httpsEnabled:
-                      type: boolean
-                    whitelistIPs:
+                    routes:
                       type: array
                       items:
-                        type: string
-                    authentication:
-                      type: object
-                      properties:
-                        enabled:
-                          type: boolean
-                        # The user/password should be stored in a Kubernetes Secret and the
-                        # reference to the secret is received in the Status created by the operator
-                        basicAuth:
-                          type: boolean
-                        # The API token should be stored in a Kubernetes Secret and the
-                        # reference to the secret is received in the Status created by the operator
-                        apiToken:
-                          type: boolean
-                    singleSignOn:
-                      type: object
-                      properties:
-                        enabled:
-                          type: boolean
-                        saml:
-                          type: boolean
-                        oauth2:
-                          type: boolean
-                        oidc:
-                          type: boolean
-              internalAPIs:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                    urlPath:
-                      type: string
-              upstreamAPIs:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                    urlPath:
-                      type: string
+                        type: object
+                        properties:
+                          summary:
+                            type: string
+                            description: "short description of service endpoint"
+                          path:
+                            type: string
+                            description: "URL path, e.g., /api/v1/orders"
+                          method:
+                            type: string
+                            enum: ["GET", "POST", "PUT", "DELETE", "PATCH", "*"]
+                          exposedAPI:
+                            type: boolean
+                            description: "If true, auth is enforced. If false, auth not required."
+                          httpsEnabled:
+                            type: boolean
+                          whitelistIPs:
+                            type: array
+                            items:
+                              type: string
           status:
             type: object
             properties:
