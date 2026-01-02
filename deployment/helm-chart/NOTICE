@@ -1,33 +1,6 @@
 CNAP (Cloud Native Application Platform)
+Copyright 2025-2026 Arun Arora
 
-Copyright (c) 2025-2026 Arun Arora
-
+This product includes software developed by Arun Arora
 (https://github.com/arunarora)
 (https://github.com/arunarora/cnap)
-
-
-Licensed under the Apache License, Version 2.0. See the LICENSE file
-at the repository root or http://www.apache.org/licenses/LICENSE-2.0
-
-When redistributing, retain this NOTICE and the Apache-2.0 LICENSE.
-If you modify the source, add a short note describing your changes.
-
--------------------------------------------------------------------------
-
-Third-Party Software
---------------------
-This product includes or links to third-party software. Retain this
-NOTICE and consult each project's distribution for exact licensing
-terms. Notable components include:
-
-- Helm — https://helm.sh/
-- Kong (Kong Gateway / Ingress) — https://konghq.com/
-- Keycloak — https://www.keycloak.org/
-- PostgreSQL — https://www.postgresql.org/
-- Lua — https://www.lua.org/
-- Python — https://www.python.org/
-- Docker — https://www.docker.com/
-
-For full attribution and license texts, see the respective projects and
-their distribution bundles.
--------------------------------------------------------------------------
