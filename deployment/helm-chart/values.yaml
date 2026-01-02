@@ -1,3 +1,7 @@
+#####################################################
+# CNAP integrated applications configurations
+# Applied as CNAP sub-charts overrides
+#####################################################
 kong-ingress-controller:
   enabled: true
   gateway:
@@ -67,7 +71,11 @@ keycloak:
 operator-applications:
   enabled: true
 
-
+################################################################################
+# CNAP Specific Configurations
+# Not always applied as sub-charts overrides
+# May also used by other scripts/apps/operators in their codebase
+################################################################################
 cnap:
   kong-ingress-controller:
     plugins:
