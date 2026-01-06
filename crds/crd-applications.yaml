@@ -28,21 +28,26 @@ spec:
           spec:
             type: object
             properties:
-              # 1. Gateway Configuration
-              # Defines the specific Kong Plugin strings to use
-              gateway:
+              # 1. Integration details of all tools and,
+              # related values for each for the concerned application
+              integrations:
                 type: object
                 properties:
-                  name:
-                    type: string
-                    description: "Name of the gateway to use (if multiple gateways are present)"
-                  plugins:
+                  # Gateway Configuration
+                  # Defines the specific Kong Plugin strings to use
+                  gateway:
                     type: object
-                    description: "Mapping of abstract purposes to concrete plugin names"
                     properties:
-                      apiToken:
+                      name:
                         type: string
-                        description: "The plugin string to use for API Token auth (e.g., key-auth)"
+                        description: "Name of the gateway to use (if multiple gateways are present)"
+                      plugins:
+                        type: object
+                        description: "Mapping of abstract purposes to concrete plugin names"
+                        properties:
+                          apiToken:
+                            type: string
+                            description: "The plugin string to use for API Token auth (e.g., key-auth)"
               # 2. Global Config (Domain, TLS, etc.)
               global:
                 type: object

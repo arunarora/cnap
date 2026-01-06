@@ -16,7 +16,7 @@ def reconcile_ingress_policy(spec, name, namespace, logger, **kwargs):
     final_domain = spec.get("global", {}).get("baseDomain", "example.com")
     
     # 2. Plugin String (e.g., "key-auth")
-    gateway_config = spec.get("gateway", {})
+    gateway_config = spec.get("integrations", {}).get("gateway", {})
     plugin_map = gateway_config.get("plugins", {})
     api_token_plugin_name = plugin_map.get("apiToken", "key-auth")
     
