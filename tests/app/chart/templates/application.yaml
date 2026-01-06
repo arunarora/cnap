@@ -15,7 +15,7 @@ spec:
                 - "kongplugin-oidc"  # Operator will look for this string to Add/Remove
 
   global:
-    baseDomain: "example.com"
+    baseDomain: "api.example.com"
     envPrefix:
       #- env: dev
       #  prefix: dev
@@ -62,7 +62,7 @@ spec:
           ports:
             port: 80
             targetPort: 8088
-        authEnabled: false
+        authEnabled: true
         httpsEnabled: false
     - name: users-component
       routes:
