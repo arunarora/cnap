@@ -17,8 +17,8 @@ spec:
   global:
     baseDomain: "example.com"
     envPrefix:
-      - env: dev
-        prefix: dev
+      #- env: dev
+      #  prefix: dev
       - env: prod
         prefix: ""
     authentication:
@@ -46,7 +46,7 @@ spec:
         path: /api/status
         method: GET
         service:
-          name: simple-api-svc
+          name: simple-api
           ports:
             port: 80
             targetPort: 8080
@@ -58,9 +58,9 @@ spec:
         path: /
         method: GET
         service:
-          name: simple-api-svc
+          name: simple-api
           ports:
-            port: 88
+            port: 80
             targetPort: 8088
         exposedAPI: true
         httpsEnabled: false
@@ -70,9 +70,9 @@ spec:
         path: /api/status
         method: GET
         service:
-          name: simple-users-svc
+          name: simple-api
           ports:
-            port: 443
+            port: 80
             targetPort: 8443
         exposedAPI: true
         httpsEnabled: true
@@ -83,9 +83,9 @@ spec:
         path: /
         method: GET
         service:
-          name: simple-users-svc
+          name: simple-api
           ports:
-            port: 444
+            port: 80
             targetPort: 8444
         exposedAPI: true
         httpsEnabled: false
