@@ -10,16 +10,3 @@ service:
   port: 80
   targetPort: 5000
   nodePort: 30763
-
-ingress:
-  enabled: true
-  className: "kong"
-  host: "api.example.com"
-  path: "/"
-  pathType: Prefix
-
-cnap:
-  appName: "simple-api" 
-  compName: "api-service"
-  protection: "enabled"
-

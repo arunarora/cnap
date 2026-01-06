@@ -52,16 +52,16 @@ spec:
                               description: "name of gateway recognized addon (for e.g. plugins)"
                             resources:
                               type: array
-                              descrpition: "collection of k8s recognized resource to attach the addon resource with (for e.g. ingress, service)"
+                              description: "collection of k8s recognized resource to attach the addon resource with (for e.g. ingress, service)"
                               items:
                                 type: object
                                 properties:
                                   resourceName:
                                     type: string
-                                    descrpition: "name of k8s recognized resource to attach the addon resource with (for e.g. ingress, service)"
+                                    description: "name of k8s recognized resource to attach the addon resource with (for e.g. ingress, service)"
                                   addonResourceName:
                                     type: array
-                                    descrpition: "collection of addon resources to add to the k8s resource (for e.g. kongPlugin resource name)"
+                                    description: "collection of addon resources to add to the k8s resource (for e.g. kongPlugin resource name)"
                                     items:
                                       type: string
 
@@ -72,12 +72,7 @@ spec:
                   baseDomain:
                     type: string
                     description: "Base domain for the application (e.g., example.com)"
-                  # Used as prefix for all exposed API URLs. For e.g.
-                  # For exposed API: example.com/createuser, the URL will be:
-                  # For Dev Env:          If envPrefix is "dev"         : dev.example.com/createuser
-                  # For Integration Env:  If envPrefix is "integ"       : integ.example.com/createuser
-                  # For Staging Env:      If envPrefix is "staging      : staging.example.com/createuser
-                  # For Production Env:   No Prefix for Production Env  : example.com/createuser
+                  # Used as prefix for all exposed API URLs.
                   envPrefix:
                     type: array
                     description: "Added as prefix to Base domain to denote env (e.g., dev.example.com for dev environment)"
@@ -91,20 +86,38 @@ spec:
                   authentication:
                     type: object
                     properties:
-                      enabled:
-                        type: boolean
                       methods:
                         type: object
                         properties:
                           basicAuth:
-                            type: boolean
+                            type: object
+                            properties:
+                              enabled:
+                                type: boolean
+                              username:
+                                type: string
+                              password:
+                                type: string
                           apiToken:
-                              type: boolean
+                            type: object
+                            properties:
+                              enabled:
+                                type: boolean
+                              addonResourceref:
+                                type: object
+                                properties:
+                                  integrationName:
+                                    type: string
+                                  addonName:
+                                    type: string
+                                  resourceName:
+                                    type: string
+                                  addonResourceName:
+                                    type: string
+                               
                   singleSignOn:
                     type: object
                     properties:
-                      enabled:
-                        type: boolean
                       methods:
                         type: object
                         properties:                        
@@ -122,6 +135,7 @@ spec:
                   properties:
                     name:
                       type: string
+                      description: "Name of the component i.e. microservice"
                     routes:
                       type: array
                       items:
@@ -130,6 +144,9 @@ spec:
                           summary:
                             type: string
                             description: "short description of service endpoint"
+                          baseDomain:
+                            type: string
+                            description: "Global baseDomain override for this path"
                           path:
                             type: string
                             description: "URL path, e.g., /api/v1/orders"
@@ -145,8 +162,24 @@ spec:
                             type: array
                             items:
                               type: string
+                          service:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: "Name of the backend service"
+                              ports:
+                                type: object
+                                properties:
+                                  port:
+                                    type: integer
+                                    description: "Component service port"
+                                  targetPort:
+                                    type: integer
+                                    description: "Component container port"
           status:
             type: object
+            x-kubernetes-preserve-unknown-fields: true
             properties:
               acceptedNames:
                 type: object
