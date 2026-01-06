@@ -102,13 +102,13 @@ class GatewayHandler(BaseGatewayHandler):
                 # Start with common plugins (Copy to avoid modifying the original list)
                 current_route_plugins = common_plugins.copy()
                 
-                # Check if route is exposed
-                exposed_api = route.get('exposedAPI', False)
+                # Check if api-auth should be applied to this route
+                api_auth_enabled = route.get('authEnabled', False)
                 
                 if auth_plugin_name:
                     # Apply auth only if: API Token is ON, and Route is Exposed
                     # Removed 'global_auth_enabled' check as the field was removed from CRD
-                    should_apply_auth = api_token_enabled and exposed_api
+                    should_apply_auth = api_token_enabled and api_auth_enabled
 
                     if should_apply_auth:
                         # Add auth plugin if not already present
@@ -116,7 +116,7 @@ class GatewayHandler(BaseGatewayHandler):
                             current_route_plugins.append(auth_plugin_name)
                     else:
                         # Explicitly remove the auth plugin if it exists (e.g. from common_plugins)
-                        # This covers cases where apiToken is disabled or exposedAPI is false.
+                        # This covers cases where apiToken is disabled or authEnabled is false.
                         # Using a while loop ensures we remove ALL instances (handling potential duplicates)
                         removed_count = 0
                         while auth_plugin_name in current_route_plugins:

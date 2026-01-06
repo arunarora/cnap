@@ -153,7 +153,7 @@ spec:
                           method:
                             type: string
                             enum: ["GET", "POST", "PUT", "DELETE", "PATCH", "*"]
-                          exposedAPI:
+                          authEnabled:
                             type: boolean
                             description: "If true, auth is enforced. If false, auth not required."
                           httpsEnabled:
