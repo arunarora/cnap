@@ -189,7 +189,33 @@ class GatewayHandler(BaseGatewayHandler):
                     
                     generated_resources.append(ingress_manifest['metadata']['name'])
 
+        # Cleanup Orphaned Ingresses
+        # This handles cases where an environment was removed or a route was deleted
+        self._cleanup_orphaned_ingresses(networking_v1, namespace, name, generated_resources, logger)
+
         return {"generated_ingress_count": len(generated_resources), "resources": generated_resources}
+
+    def _cleanup_orphaned_ingresses(self, api, namespace, app_name, active_ingress_names, logger):
+        """
+        Deletes Ingress resources that are managed by this application (identified by label)
+        but are no longer present in the active_ingress_names list.
+        """
+        # Label selector to find all ingresses managed by this app
+        label_selector = f"cnap.platforms.howlabs.io/application={app_name}"
+        
+        try:
+            existing_ingresses = api.list_namespaced_ingress(namespace, label_selector=label_selector)
+            for ingress in existing_ingresses.items:
+                if ingress.metadata.name not in active_ingress_names:
+                    logger.info(f"Deleting orphaned Ingress: {ingress.metadata.name}")
+                    try:
+                        api.delete_namespaced_ingress(ingress.metadata.name, namespace)
+                    except ApiException as e:
+                        # If it's already gone (404), that's fine
+                        if e.status != 404:
+                            logger.warning(f"Failed to delete orphaned Ingress {ingress.metadata.name}: {e}")
+        except ApiException as e:
+            logger.error(f"Failed to list Ingresses for cleanup: {e}")
 
     def _generate_ingress_manifest(self, app_name, service_name, service_port, namespace, host, route, base_plugins):
         """
@@ -234,6 +260,9 @@ class GatewayHandler(BaseGatewayHandler):
             "metadata": {
                 "name": name,
                 "namespace": namespace,
+                "labels": {
+                    "cnap.platforms.howlabs.io/application": app_name
+                },
                 "annotations": annotations
             },
             "spec": {
