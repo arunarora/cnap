@@ -7,12 +7,13 @@ spec:
   integrations:
     gateway:
       name: kong-ingress-controller  # Name of the gateway to use
-      addons:
-        - name: plugins
-          resources:
-            - resourceName: ingress
-              addonResourceName:
-                - "kongplugin-oidc"  # Operator will look for this string to Add/Remove
+        #      addons:
+        #        - name: plugins
+        #          resources:
+        #            - resourceName: ingress
+        #              addonResourceName:
+        #                - "kongplugin-oidc"  # Operator will look for this string to Add/Remove
+        #                - "testplugin-kong"
 
   global:
     baseDomain: "api.example.com"
@@ -50,7 +51,7 @@ spec:
           ports:
             port: 80
             targetPort: 8080
-        authEnabled: false
+        authEnabled: true
         httpsEnabled: true
         whitelistIPs:
         - 10.0.0.0/24
@@ -62,11 +63,12 @@ spec:
           ports:
             port: 80
             targetPort: 8088
-        authEnabled: true
+        authEnabled: false
         httpsEnabled: false
     - name: users-component
       routes:
       - summary: "Status API"
+        baseDomain: "users.example.com"
         path: /api/status
         method: GET
         service:
