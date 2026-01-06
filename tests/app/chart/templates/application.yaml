@@ -6,8 +6,12 @@ spec:
   integrations:
     gateway:
       name: kong-ingress-controller  # Name of the gateway to use
-      plugins:
-        apiToken: "kongplugin-oidc"  # Operator will look for this string to Add/Remove
+      addons:
+        - name: plugins
+          resources:
+            - resourceName: ingress
+              addonResourceName:
+                - "kongplugin-oidc"  # Operator will look for this string to Add/Remove
 
   global:
     baseDomain: api.example.com
@@ -20,7 +24,7 @@ spec:
       enabled: true
       methods:
         basicAuth: false
-        apiToken: false
+        apiToken: true
     singleSignOn:
       enabled: false
       methods:

@@ -4,10 +4,16 @@ metadata:
   name: example-app
   namespace: cnap
 spec:
-  gateway:
-    name: kong-ingress-controller  # Name of the gateway to use
-    plugins:
-      apiToken: "kongplugin-oidc"  # Operator will look for this string to Add/Remove
+  integrations:
+    gateway:
+      name: kong-ingress-controller  # Name of the gateway to use
+      addons:
+        - name: plugins
+          resources:
+            - resourceName: ingress
+              addonResourceName:
+                - "kongplugin-oidc"  # Operator will look for this string to Add/Remove
+
   global:
     baseDomain: api.example.com
     envPrefix:

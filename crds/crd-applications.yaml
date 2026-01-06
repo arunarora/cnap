@@ -40,14 +40,31 @@ spec:
                     properties:
                       name:
                         type: string
-                        description: "Name of the gateway to use (if multiple gateways are present)"
-                      plugins:
-                        type: object
-                        description: "Mapping of abstract purposes to concrete plugin names"
-                        properties:
-                          apiToken:
-                            type: string
-                            description: "The plugin string to use for API Token auth (e.g., key-auth)"
+                        description: "Name of the gateway to use (MUST be same name as what CNAP knows as a gateway)"
+                      addons:
+                        type: array
+                        description: "collection of addons for the deployed gateway"
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              description: "name of gateway recognized addon (for e.g. plugins)"
+                            resources:
+                              type: array
+                              descrpition: "collection of k8s recognized resource to attach the addon resource with (for e.g. ingress, service)"
+                              items:
+                                type: object
+                                properties:
+                                  resourceName:
+                                    type: string
+                                    descrpition: "name of k8s recognized resource to attach the addon resource with (for e.g. ingress, service)"
+                                  addonResourceName:
+                                    type: array
+                                    descrpition: "collection of addon resources to add to the k8s resource (for e.g. kongPlugin resource name)"
+                                    items:
+                                      type: string
+
               # 2. Global Config (Domain, TLS, etc.)
               global:
                 type: object
