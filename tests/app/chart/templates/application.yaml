@@ -2,6 +2,7 @@ apiVersion: cnap.platforms.howlabs.io/v1alpha1
 kind: Application
 metadata:
   name: simple-api
+  namespace: cnap
 spec:
   integrations:
     gateway:
@@ -14,36 +15,77 @@ spec:
                 - "kongplugin-oidc"  # Operator will look for this string to Add/Remove
 
   global:
-    baseDomain: api.example.com
+    baseDomain: "example.com"
     envPrefix:
       - env: dev
         prefix: dev
       - env: prod
         prefix: ""
     authentication:
-      enabled: true
       methods:
-        basicAuth: false
-        apiToken: true
+        basicAuth:
+          enabled: false
+        apiToken:
+          enabled: true
+          addonResourceref:
+            integrationName: "gateway"
+            addonName: "plugins"
+            resourceName: "ingress"
+            addonResourceName: "kongplugin-oidc"
     singleSignOn:
-      enabled: false
       methods:
         saml: false
         oauth2: false
         oidc: false
 
   components:
-    - name: api-service
+    - name: api-component
       routes:
-        - summary: "Status API"
-          path: /api/status
-          method: GET
-          exposedAPI: true
-          httpsEnabled: true
-          whitelistIPs:
-            - 10.0.0.0/24
-        - summary: "Homepage API"
-          path: /
-          method: GET
-          exposedAPI: true
-          httpsEnabled: false
+      - summary: "Status API"
+        baseDomain: "api.example.com"
+        path: /api/status
+        method: GET
+        service:
+          name: simple-api-svc
+          ports:
+            port: 80
+            targetPort: 8080
+        exposedAPI: true
+        httpsEnabled: true
+        whitelistIPs:
+        - 10.0.0.0/24
+      - summary: "Homepage"
+        path: /
+        method: GET
+        service:
+          name: simple-api-svc
+          ports:
+            port: 88
+            targetPort: 8088
+        exposedAPI: true
+        httpsEnabled: false
+    - name: users-component
+      routes:
+      - summary: "Status API"
+        path: /api/status
+        method: GET
+        service:
+          name: simple-users-svc
+          ports:
+            port: 443
+            targetPort: 8443
+        exposedAPI: true
+        httpsEnabled: true
+        whitelistIPs:
+        - 10.0.0.0/24
+      - summary: "Homepage"
+        baseDomain: "users.example.com"
+        path: /
+        method: GET
+        service:
+          name: simple-users-svc
+          ports:
+            port: 444
+            targetPort: 8444
+        exposedAPI: true
+        httpsEnabled: false
