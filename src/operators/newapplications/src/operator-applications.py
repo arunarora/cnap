@@ -5,6 +5,8 @@ from gateway_manager import GatewayManager
 # Initialize the gateway manager to handle routing to specific implementations
 gateway_manager = GatewayManager()
 
+# Added @kopf.on.resume to handle resources that exist when the operator starts
+@kopf.on.resume('cnap.platforms.howlabs.io', 'v1alpha1', 'applications')
 @kopf.on.create('cnap.platforms.howlabs.io', 'v1alpha1', 'applications')
 @kopf.on.update('cnap.platforms.howlabs.io', 'v1alpha1', 'applications')
 def manage_application(spec, name, namespace, logger, **kwargs):
@@ -43,4 +45,5 @@ def manage_application(spec, name, namespace, logger, **kwargs):
 
     except Exception as e:
         logger.error(f"Failed to process application: {str(e)}")
+        # Retry logic: raises TemporaryError to retry after a delay
         raise kopf.TemporaryError(f"Error processing application: {str(e)}", delay=30)
