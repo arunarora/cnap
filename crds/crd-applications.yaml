@@ -1,0 +1,209 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  # The name is always in the form: <plural>.<group>
+  name: applications.cnap.platforms.howlabs.io
+
+spec:
+  group: cnap.platforms.howlabs.io
+  names:
+    kind: Application
+    plural: applications
+    singular: application
+    shortNames:
+    - app
+    - apps
+  # Namespaced or Cluster
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    # each version can be enabled or disabled for serving with served
+    served: true
+    # each version can be marked as the storage version with storage
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              # 1. Integration details of all tools and,
+              # related values for each for the concerned application
+              integrations:
+                type: object
+                properties:
+                  # Gateway Configuration
+                  # Defines the specific Kong Plugin strings to use
+                  gateway:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: "Name of the gateway to use (MUST be same name as what CNAP knows as a gateway)"
+                      addons:
+                        type: array
+                        description: "collection of addons for the deployed gateway"
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              description: "name of gateway recognized addon (for e.g. plugins)"
+                            resources:
+                              type: array
+                              description: "collection of k8s recognized resource to attach the addon resource with (for e.g. ingress, service)"
+                              items:
+                                type: object
+                                properties:
+                                  resourceName:
+                                    type: string
+                                    description: "name of k8s recognized resource to attach the addon resource with (for e.g. ingress, service)"
+                                  addonResourceName:
+                                    type: array
+                                    description: "collection of addon resources to add to the k8s resource (for e.g. kongPlugin resource name)"
+                                    items:
+                                      type: string
+
+              # 2. Global Config (Domain, TLS, etc.)
+              global:
+                type: object
+                properties:
+                  baseDomain:
+                    type: string
+                    description: "Base domain for the application (e.g., example.com)"
+                  # Used as prefix for all exposed API URLs.
+                  envPrefix:
+                    type: array
+                    description: "Added as prefix to Base domain to denote env (e.g., dev.example.com for dev environment)"
+                    items:
+                      type: object
+                      properties:
+                        env:
+                          type: string
+                        prefix:
+                          type: string
+                  authentication:
+                    type: object
+                    properties:
+                      methods:
+                        type: object
+                        properties:
+                          basicAuth:
+                            type: object
+                            properties:
+                              enabled:
+                                type: boolean
+                              username:
+                                type: string
+                              password:
+                                type: string
+                          apiToken:
+                            type: object
+                            properties:
+                              enabled:
+                                type: boolean
+                              addonResourceref:
+                                type: object
+                                properties:
+                                  integrationName:
+                                    type: string
+                                  addonName:
+                                    type: string
+                                  resourceName:
+                                    type: string
+                                  addonResourceName:
+                                    type: string
+                               
+                  singleSignOn:
+                    type: object
+                    properties:
+                      methods:
+                        type: object
+                        properties:                        
+                          saml:
+                            type: boolean
+                          oauth2:
+                            type: boolean
+                          oidc:
+                            type: boolean
+              # 3. List of Microservices
+              components:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: "Name of the component i.e. microservice"
+                    routes:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          summary:
+                            type: string
+                            description: "short description of service endpoint"
+                          baseDomain:
+                            type: string
+                            description: "Global baseDomain override for this path"
+                          path:
+                            type: string
+                            description: "URL path, e.g., /api/v1/orders"
+                          method:
+                            type: string
+                            enum: ["GET", "POST", "PUT", "DELETE", "PATCH", "*"]
+                          authEnabled:
+                            type: boolean
+                            description: "If true, auth is enforced. If false, auth not required."
+                          httpsEnabled:
+                            type: boolean
+                          whitelistIPs:
+                            type: array
+                            items:
+                              type: string
+                          service:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                                description: "Name of the backend service"
+                              ports:
+                                type: object
+                                properties:
+                                  port:
+                                    type: integer
+                                    description: "Component service port"
+                                  targetPort:
+                                    type: integer
+                                    description: "Component container port"
+          status:
+            type: object
+            x-kubernetes-preserve-unknown-fields: true
+            properties:
+              acceptedNames:
+                type: object
+                properties:
+                  plural:
+                    type: string
+                  singular:
+                    type: string
+                  kind:
+                    type: string
+                  listKind:
+                    type: string
+              conditions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    status:
+                      type: string
+                    lastTransitionTime:
+                      type: string
+                    reason:
+                      type: string
+                    message:
+                      type: string

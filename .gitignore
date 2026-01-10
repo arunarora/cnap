@@ -1,0 +1,9 @@
+# package time created directories 
+deployment/target/
+# Python virtual environment
+.venv/
+venv/
+# other common ignores
+__pycache__/
+*.pyc
+.env

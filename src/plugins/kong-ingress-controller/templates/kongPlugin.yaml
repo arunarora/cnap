@@ -1,0 +1,14 @@
+apiVersion: configuration.konghq.com/v1
+kind: KongPlugin
+metadata:
+  name: kongplugin-<VarPluginName>
+  namespace:  {{ .Release.Namespace | quote }}
+  annotations:
+    kubernetes.io/ingress.class: kong
+plugin: <VarPluginName> # The name of the plugin
+config:
+  {{- /* 1. Safely grab the config block using 'index' to handle the hyphens */ -}}
+  {{- $pluginConfig := index .Values.cnap "kong-ingress-controller" "plugins" "<VarPluginName>" "config" }}
+  
+  {{- /* 2. Dump the entire block as valid YAML with correct indentation */ -}}
+  {{- toYaml $pluginConfig | nindent 2 }}

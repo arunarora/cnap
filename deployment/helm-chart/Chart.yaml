@@ -1,0 +1,22 @@
+apiVersion: v2
+name: cnap
+version: 0.0.2
+appVersion: "0.0.1"
+description: A Helm chart for CNAP platform components
+type: application
+maintainers:
+  - name: Arun Arora
+    email: arun.arora.dev@gmail.com
+dependencies:
+  - name: kong-ingress-controller
+    version: 0.21.0
+    repository: file://../../dependent-charts/kong-ingress-controller
+    condition: kong-ingress-controller.enabled
+  - name: keycloak
+    version: 13.0.3
+    repository: file://../../dependent-charts/keycloak
+    condition: keycloak.enabled
+  - name: operator-applications
+    version: 0.0.1
+    repository: file://../../dependent-charts/operator-applications
+    condition: operator-applications.enabled

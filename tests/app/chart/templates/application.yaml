@@ -1,0 +1,93 @@
+apiVersion: cnap.platforms.howlabs.io/v1alpha1
+kind: Application
+metadata:
+  name: simple-api
+  namespace: cnap
+spec:
+  integrations:
+    gateway:
+      name: kong-ingress-controller  # Name of the gateway to use
+        #      addons:
+        #        - name: plugins
+        #          resources:
+        #            - resourceName: ingress
+        #              addonResourceName:
+        #                - "kongplugin-oidc"  # Operator will look for this string to Add/Remove
+        #                - "testplugin-kong"
+
+  global:
+    baseDomain: "api.example.com"
+    envPrefix:
+      #- env: dev
+      #  prefix: dev
+      - env: prod
+        prefix: ""
+    authentication:
+      methods:
+        basicAuth:
+          enabled: false
+        apiToken:
+          enabled: true
+          addonResourceref:
+            integrationName: "gateway"
+            addonName: "plugins"
+            resourceName: "ingress"
+            addonResourceName: "kongplugin-oidc"
+    singleSignOn:
+      methods:
+        saml: false
+        oauth2: false
+        oidc: false
+
+  components:
+    - name: api-component
+      routes:
+      - summary: "Status API"
+        baseDomain: "api.example.com"
+        path: /api/status
+        method: GET
+        service:
+          name: simple-api
+          ports:
+            port: 80
+            targetPort: 8080
+        authEnabled: true
+        httpsEnabled: true
+        whitelistIPs:
+        - 10.0.0.0/24
+      - summary: "Homepage"
+        path: /
+        method: GET
+        service:
+          name: simple-api
+          ports:
+            port: 80
+            targetPort: 8088
+        authEnabled: false
+        httpsEnabled: false
+    - name: users-component
+      routes:
+      - summary: "Status API"
+        baseDomain: "users.example.com"
+        path: /api/status
+        method: GET
+        service:
+          name: simple-api
+          ports:
+            port: 80
+            targetPort: 8443
+        authEnabled: false
+        httpsEnabled: true
+        whitelistIPs:
+        - 10.0.0.0/24
+      - summary: "Homepage"
+        baseDomain: "users.example.com"
+        path: /
+        method: GET
+        service:
+          name: simple-api
+          ports:
+            port: 80
+            targetPort: 8444
+        authEnabled: false
+        httpsEnabled: false
