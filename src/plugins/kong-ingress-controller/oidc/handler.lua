@@ -9,16 +9,14 @@ local oidcHandler = {
 function oidcHandler:access(conf)
     kong.log.debug("oidc access handler called")
 
-
-    -- Exit with error if no Authorization header is present in the request
     if not ngx.var.http_authorization then
         ngx.log(ngx.ERR, "Authorization Header missing in request")
         return ngx.exit(ngx.HTTP_UNAUTHORIZED)
     end
 
     -- Validate the access token with the identity provider
-    local httpc = http.new()
-    local res, err = httpc:request_uri(conf.token_validation_url, {
+    local httpclient = http.new()
+    local response, error = httpclient:request_uri(conf.token_validation_url, {
         method = "POST",
         body = "client_id=" .. conf.client_id .. "&client_secret=" .. conf.client_secret .. "&token=" .. ngx.var.http_authorization,
         headers = {
@@ -26,38 +24,30 @@ function oidcHandler:access(conf)
         },
     })
 
-    ngx.log(ngx.NOTICE, "Entering access function")
-    -- ngx.log(ngx.NOTICE, "body ", cjson.encode(request_options))
-    ngx.log(ngx.NOTICE, "Plugin Configuration :", cjson.encode(conf))
-
-    if not res then
-        ngx.log(ngx.ERR, "Failed to introspect token: ", err)
+    if not response then
+        ngx.log(ngx.ERR, "Token Validation Failed: ", error)
         return ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
     end
 
-    if res.status ~= 200 then
-        ngx.log(ngx.ERR, "Token introspection failed with status: ", res.status)
+    if response.status ~= 200 then
+        ngx.log(ngx.ERR, "Token introspection failed: ", response.status)
+        return ngx.exit(ngx.HTTP_UNAUTHORIZED)
+    else
+        ngx.log(ngx.NOTICE, "Token validation result: ", response.body)
+    end
+
+    local token_validation_result = cjson.decode(response.body)
+
+    if not token_validation_result.active then
+        ngx.log(ngx.ERR, "Access token not active")
         return ngx.exit(ngx.HTTP_UNAUTHORIZED)
     end
 
-    -- Parse the introspection response
-    local introspection_result = cjson.decode(res.body)
-    ngx.log(ngx.NOTICE, "Introspection result: ", res.body)
+    ngx.req.set_header("X-User-Id", token_validation_result.sub)
+    ngx.req.set_header("X-Username", token_validation_result.username)
 
-    -- Check if the token is active
-    if not introspection_result.active then
-        ngx.log(ngx.ERR, "Access token is not active")
-        return ngx.exit(ngx.HTTP_UNAUTHORIZED)
-    end
-
-    -- Add introspection result to request headers
-    ngx.req.set_header("X-User-Id", introspection_result.sub)
-    ngx.req.set_header("X-Username", introspection_result.username)
-
-    ngx.log(ngx.INFO, "Token introspection successful")
-
-    -- Close the HTTP connection
-    httpc:close()
+    ngx.log(ngx.INFO, "Token Successfully Validated")
+    httpclient:close()
 end
 
 return oidcHandler
