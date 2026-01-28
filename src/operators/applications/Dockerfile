@@ -15,10 +15,13 @@ USER appuser
 ENV PATH="${PATH}:/home/appuser/.local/bin"
 
 # 4. Install kopf using pip
-RUN pip install --user kopf kubernetes
+RUN pip install --user kopf kubernetes pyyaml
 
 # 5. Copy the application code into the container
-ADD /src/* /app/
+ADD /src/gateway_manager.py /app/
+ADD /src/operator-applications.py /app/
+RUN mkdir -p /app/gateways
+ADD /src/gateways/* /app/gateways/
 
 # 6. Set the default command to run the operator
 RUN echo $PATH
