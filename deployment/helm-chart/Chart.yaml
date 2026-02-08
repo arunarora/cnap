@@ -20,3 +20,8 @@ dependencies:
     version: 0.0.1
     repository: file://../../dependent-charts/operator-applications
     condition: operator-applications.enabled
+  - name: kube-prometheus-stack
+    version: 81.5.0
+    repository: file://../../dependent-charts/kube-prometheus-stack
+    condition: keycloak.enabled
+

@@ -71,6 +71,9 @@ keycloak:
 operator-applications:
   enabled: true
 
+kube-prometheus-stack:
+  enabled: true
+
 ################################################################################
 # CNAP Specific Configurations
 # Not always applied as sub-charts overrides

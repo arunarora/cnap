@@ -63,7 +63,7 @@ spec:
           ports:
             port: 80
             targetPort: 8088
-        authEnabled: false
+        authEnabled: true
         httpsEnabled: false
     - name: users-component
       routes:

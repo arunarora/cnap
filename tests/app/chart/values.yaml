@@ -1,9 +1,9 @@
 replicaCount: 2
 
 image:
-  repository: myuser/helm-api  # REPLACE with your image
+  repository: arunarora/simple-api  # REPLACE with your image
   pullPolicy: Never
-  tag: "1.0.0"
+  tag: "latest"
 
 service:
   type: NodePort
