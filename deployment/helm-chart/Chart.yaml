@@ -24,4 +24,8 @@ dependencies:
     version: 81.5.0
     repository: file://../../dependent-charts/kube-prometheus-stack
     condition: keycloak.enabled
+  - name: opa
+    version: 4.1.1
+    repository: file://../../dependent-charts/opa
+    condition: opa.enabled
 

@@ -74,6 +74,9 @@ operator-applications:
 kube-prometheus-stack:
   enabled: true
 
+opa:
+  enabled: true
+
 ################################################################################
 # CNAP Specific Configurations
 # Not always applied as sub-charts overrides
