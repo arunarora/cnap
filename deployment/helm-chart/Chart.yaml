@@ -28,4 +28,8 @@ dependencies:
     version: 4.1.1
     repository: file://../../dependent-charts/opa
     condition: opa.enabled
+  - name: operator-autoremediationpolicies
+    version: 0.0.1
+    repository: file://../../dependent-charts/operator-autoremediationpolicies
+    condition: operator-autoremediationpolicies.enabled
 
