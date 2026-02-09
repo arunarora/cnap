@@ -1,0 +1,59 @@
+apiVersion: cnap.platforms.howlabs.io/v1alpha1
+kind: AutoRemediationPolicy
+metadata:
+  name: cpu-policy-1
+  namespace: cnap
+spec:
+  targetRef:
+    kind: Deployment
+    name: payment-service
+    namespace: payments
+# 1. Metric to fetch (JSON:"primary_metrics" & "context_metrics")
+  metrics:
+    # "Primary" are the symptoms that trigger the reflex (e.g., High CPU)
+    primary:
+      - key: "cpu_usage_percent"
+        provider: "prometheus"
+        query: "sum(rate(container_cpu_usage_seconds_total{pod=~'{{target_name}}-.*'}[5m]))* 100"
+
+    # "Context" are the qualifiers (e.g., Traffic, Error Rate)
+    context:
+      - key: "http_requests_per_second"
+        provider: "prometheus"
+        query: "sum(rate(http_requests_total{service='{{target_name}}'}[2m]))"
+      
+      - key: "error_rate_5xx"
+        provider: "prometheus"
+        query: "sum(rate(http_requests_total{status=~'5.*'}[2m]))"
+  
+# 2. Define the decision matrix (Mapped to OPA)
+  rules:
+    - name: "Potential Deadlock"
+      condition: 
+        - metric: cpu_usage_percent
+          operator: ">"
+          threshold: 80
+        - metric: traffic_rate
+          operator: "trend_flat" # Special operator handled by logic
+      action:
+        type: Restart
+        
+    - name: "Valid Traffic Spike"
+      condition:
+        - metric: cpu_usage_percent
+          operator: ">"
+          threshold: 80
+        - metric: traffic_rate
+          operator: "trend_rising"
+      action:
+        type: Scale
+        params:
+            step: "2"
+# 3. System State (Maps to JSON: "system_state")
+  # These are usually built-in lookups the operator can do natively via K8s API
+  systemChecks:
+    Last_restart_seconds_ago: "120"
+    Current_replicas: "3"
+    Max_replicas: "10"
+    maintenance_mode: "true"
+

@@ -1,0 +1,117 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+    # The name is always in the form: <plural>.<group>
+  name: autoremediationpolicies.cnap.platforms.howlabs.io
+spec:
+  group: cnap.platforms.howlabs.io
+  names:
+    kind: AutoRemediationPolicy
+    plural: autoremediationpolicies
+    singular: autoremediationpolicy
+    shortNames:
+    - autorempol
+    - autorempols
+  # Namespaced or Cluster
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    # each version can be enabled or disabled for serving with served
+    served: true
+    # each version can be marked as the storage version with storage
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              targetRef:
+                type: object
+                description: "Reference to the target resource (e.g., deployment) that the policy applies to"
+                properties:
+                  kind:
+                    type: string
+                    description: "Kind of the target resource (e.g., Deployment, StatefulSet)"
+                  name:
+                    type: string
+                    description: "Name of the target resource (e.g., deployment name)"
+                  namespace:
+                    type: string
+                    description: "Namespace of the target resource"
+              metrics:
+                type: object
+                description: "Metrics to monitor for triggering remediation actions"
+                properties:
+                  primary:
+                    type: array
+                    description: "Primary metrics that trigger the reflex (e.g., High CPU)"
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                          description: "Unique identifier for the metric (e.g., cpu_usage_percent)"
+                        provider:
+                          type: string
+                          description: "Metrics provider (e.g., prometheus)"
+                        query:
+                          type: string
+                          description: "Query to fetch the metric value (e.g., PromQL query)"
+                  context:
+                    type: array
+                    description: "Context metrics that qualify the conditions (e.g., Traffic, Error Rate)"
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                          description: "Unique identifier for the metric (e.g., http_requests_per_second)"
+                        provider:
+                          type: string
+                          description: "Metrics provider (e.g., prometheus)"
+                        query:
+                          type: string
+                          description: "Query to fetch the metric value (e.g., PromQL query)"
+              rules:
+                type: array
+                description: "Decision matrix rules that define conditions and corresponding actions"
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      description: "Name of the rule (e.g., Potential Deadlock)"
+                    condition:
+                      type: array
+                      description: "Conditions that need to be met for the rule to trigger"
+                      items:
+                        type: object
+                        properties:
+                          metric:
+                            type: string
+                            description: "Reference to the metric key defined in the metrics section (e.g., cpu_usage_percent)"
+                          operator:
+                            type: string
+                            description: "Operator to compare the metric value against the threshold (e.g., >, trend_flat)"
+                          threshold:
+                            type: number
+                            description: "Threshold value for the metric to trigger the condition (e.g., 80 for 80%)"
+                    action:
+                      type: object
+                      description: "Action to take when the conditions are met"
+                      properties:
+                        type:
+                          type: string
+                          description: "Type of action to perform (e.g., Restart, Scale)"
+                        params:
+                          type: object
+                          description: "Additional parameters for the action (e.g., step for scaling)"
+                          additionalProperties:
+                            type: string
+              systemChecks:
+                type: object
+                description: "System state checks that can be used in conditions (e.g., Last restart seconds ago, Current replicas)"
+                additionalProperties:
+                  type: string
